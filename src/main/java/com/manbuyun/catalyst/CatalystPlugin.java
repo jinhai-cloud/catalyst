@@ -1,11 +1,22 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.manbuyun.catalyst;
 
 import com.google.common.collect.ImmutableSet;
-import com.manbuyun.catalyst.aggregation.VarcharSumAggregation;
 import com.manbuyun.catalyst.scalar.ExtBigintOperators;
 import com.manbuyun.catalyst.scalar.ExtDateTimeFunctions;
 import com.manbuyun.catalyst.scalar.ExtIntegerOperators;
-import com.manbuyun.catalyst.scalar.ExtJsonFunctions;
 import com.manbuyun.catalyst.scalar.ExtUrlFunctions;
 import io.prestosql.spi.Plugin;
 
@@ -15,16 +26,16 @@ import java.util.Set;
  * @author jinhai
  * @date 2019/05/19
  */
-public class CatalystPlugin implements Plugin {
-
+public class CatalystPlugin
+        implements Plugin
+{
     @Override
-    public Set<Class<?>> getFunctions() {
+    public Set<Class<?>> getFunctions()
+    {
         return ImmutableSet.<Class<?>>builder()
-                .add(VarcharSumAggregation.class)
                 .add(ExtDateTimeFunctions.class)
                 .add(ExtBigintOperators.class)
                 .add(ExtIntegerOperators.class)
-                .add(ExtJsonFunctions.class)
                 .add(ExtUrlFunctions.class)
                 .build();
     }
