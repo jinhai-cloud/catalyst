@@ -81,8 +81,8 @@ public class ExtDateTimeFunctions
     @SqlType(StandardTypes.VARCHAR)
     public static Slice toDateStr(@SqlType("varchar(x)") Slice slice)
     {
-        DateTime dt1 = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        return utf8Slice(dt1.toString(YYYY_MM_DD));
+        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
+        return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
     @ScalarFunction("to_date")
