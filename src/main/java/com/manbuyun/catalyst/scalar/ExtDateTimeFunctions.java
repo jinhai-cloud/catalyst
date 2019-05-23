@@ -56,6 +56,15 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
+    @Description("add the specified amount of time to the given time")
+    @ScalarFunction("date_add")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice dateAddUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    {
+        DateTime dt = new DateTime(timestamp).plusDays(toIntExact(value));
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
     @Description("sub the specified amount of time to the given time")
     @LiteralParameters("x")
     @ScalarFunction("date_sub")
@@ -76,6 +85,15 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
+    @Description("sub the specified amount of time to the given time")
+    @ScalarFunction("date_sub")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice dateSubUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    {
+        DateTime dt = new DateTime(timestamp).minusDays(toIntExact(value));
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
     @ScalarFunction("to_date")
     @LiteralParameters("x")
     @SqlType(StandardTypes.VARCHAR)
@@ -90,6 +108,14 @@ public class ExtDateTimeFunctions
     public static Slice toDate(@SqlType(StandardTypes.DATE) long date)
     {
         DateTime dt = new DateTime(DAYS.toMillis(date));
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
+    @ScalarFunction("to_date")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice toDateUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    {
+        DateTime dt = new DateTime(timestamp);
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 }
