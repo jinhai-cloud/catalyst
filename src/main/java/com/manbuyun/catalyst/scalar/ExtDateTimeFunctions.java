@@ -60,9 +60,9 @@ public class ExtDateTimeFunctions
     @Description("add the specified amount of time to the given time")
     @ScalarFunction("date_add")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice dateAddUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    public static Slice dateAddUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(timestamp).plusDays(toIntExact(value));
+        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).plusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
@@ -89,9 +89,9 @@ public class ExtDateTimeFunctions
     @Description("sub the specified amount of time to the given time")
     @ScalarFunction("date_sub")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice dateSubUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    public static Slice dateSubUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(timestamp).minusDays(toIntExact(value));
+        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).minusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
@@ -114,9 +114,9 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("to_date")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice toDateUnix(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    public static Slice toDateUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
     {
-        DateTime dt = new DateTime(timestamp);
+        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone));
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
@@ -146,10 +146,10 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff3(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType(StandardTypes.TIMESTAMP) long right)
+    public static long dateDiff3(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
     {
-        DateTime dt1 = new DateTime(left);
-        DateTime dt2 = new DateTime(right);
+        DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
+        DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
         return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
@@ -179,10 +179,10 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff6(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP) long right)
+    public static long dateDiff6(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
     {
         DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
-        DateTime dt2 = new DateTime(right);
+        DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
         return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
@@ -190,9 +190,9 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff7(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType("varchar(x)") Slice right)
+    public static long dateDiff7(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType("varchar(x)") Slice right)
     {
-        DateTime dt1 = new DateTime(left);
+        DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
         DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
         return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }

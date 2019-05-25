@@ -31,6 +31,7 @@ public class DateTimeUtils
     private DateTimeUtils() {}
 
     private static final DateTimeFormatter STANDARD_TIME_FORMATTER;
+    private static final int MILLIS_SHIFT = 12;
 
     static {
         DateTimeParser[] parsers = {
@@ -53,5 +54,10 @@ public class DateTimeUtils
         catch (Exception e) {
             throw new IllegalArgumentException(format("Invalid time '%s'", value));
         }
+    }
+
+    public static long unpackMillisUtc(long dateTimeWithTimeZone)
+    {
+        return dateTimeWithTimeZone >> MILLIS_SHIFT;
     }
 }
