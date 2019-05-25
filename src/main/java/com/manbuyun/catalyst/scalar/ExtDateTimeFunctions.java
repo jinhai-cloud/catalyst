@@ -128,7 +128,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
         DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -139,7 +139,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = new DateTime(DAYS.toMillis(left));
         DateTime dt2 = new DateTime(DAYS.toMillis(right));
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -150,7 +150,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = new DateTime(left);
         DateTime dt2 = new DateTime(right);
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -161,7 +161,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
         DateTime dt2 = new DateTime(DAYS.toMillis(right));
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -172,7 +172,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = new DateTime(DAYS.toMillis(left));
         DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -183,7 +183,7 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
         DateTime dt2 = new DateTime(right);
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 
     @Description("difference of the given dates in the given unit")
@@ -194,6 +194,6 @@ public class ExtDateTimeFunctions
     {
         DateTime dt1 = new DateTime(left);
         DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
-        return Days.daysBetween(dt1, dt2).getDays();
+        return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
 }
