@@ -21,6 +21,7 @@ import io.prestosql.spi.function.ScalarFunction;
 import io.prestosql.spi.function.SqlType;
 import io.prestosql.spi.type.StandardTypes;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import static io.airlift.slice.Slices.utf8Slice;
 import static java.lang.Math.toIntExact;
@@ -117,5 +118,82 @@ public class ExtDateTimeFunctions
     {
         DateTime dt = new DateTime(timestamp);
         return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff1(@SqlType("varchar(x)") Slice left, @SqlType("varchar(x)") Slice right)
+    {
+        DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
+        DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff2(@SqlType(StandardTypes.DATE) long left, @SqlType(StandardTypes.DATE) long right)
+    {
+        DateTime dt1 = new DateTime(DAYS.toMillis(left));
+        DateTime dt2 = new DateTime(DAYS.toMillis(right));
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff3(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType(StandardTypes.TIMESTAMP) long right)
+    {
+        DateTime dt1 = new DateTime(left);
+        DateTime dt2 = new DateTime(right);
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff4(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.DATE) long right)
+    {
+        DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
+        DateTime dt2 = new DateTime(DAYS.toMillis(right));
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff5(@SqlType(StandardTypes.DATE) long left, @SqlType("varchar(x)") Slice right)
+    {
+        DateTime dt1 = new DateTime(DAYS.toMillis(left));
+        DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff6(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP) long right)
+    {
+        DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
+        DateTime dt2 = new DateTime(right);
+        return Days.daysBetween(dt1, dt2).getDays();
+    }
+
+    @Description("difference of the given dates in the given unit")
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long dateDiff7(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType("varchar(x)") Slice right)
+    {
+        DateTime dt1 = new DateTime(left);
+        DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
+        return Days.daysBetween(dt1, dt2).getDays();
     }
 }
