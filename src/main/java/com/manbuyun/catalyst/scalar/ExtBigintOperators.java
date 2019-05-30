@@ -20,6 +20,7 @@ import io.prestosql.spi.function.SqlNullable;
 import io.prestosql.spi.function.SqlType;
 import io.prestosql.spi.type.StandardTypes;
 
+import static io.prestosql.spi.function.OperatorType.BETWEEN;
 import static io.prestosql.spi.function.OperatorType.EQUAL;
 import static io.prestosql.spi.function.OperatorType.GREATER_THAN;
 import static io.prestosql.spi.function.OperatorType.GREATER_THAN_OR_EQUAL;
@@ -121,5 +122,19 @@ public class ExtBigintOperators
     public static boolean greaterThanOrEqual(@SqlType(StandardTypes.BIGINT) long left, @SqlType(StandardTypes.VARCHAR) Slice right)
     {
         return left >= SliceUtils.toLong(right);
+    }
+
+    @ScalarOperator(BETWEEN)
+    @SqlType(StandardTypes.BOOLEAN)
+    public static boolean between(@SqlType(StandardTypes.VARCHAR) Slice value, @SqlType(StandardTypes.BIGINT) long min, @SqlType(StandardTypes.BIGINT) long max)
+    {
+        return min <= SliceUtils.toLong(value) && SliceUtils.toLong(value) <= max;
+    }
+
+    @ScalarOperator(BETWEEN)
+    @SqlType(StandardTypes.BOOLEAN)
+    public static boolean between(@SqlType(StandardTypes.BIGINT) long value, @SqlType(StandardTypes.VARCHAR) Slice min, @SqlType(StandardTypes.VARCHAR) Slice max)
+    {
+        return SliceUtils.toLong(min) <= value && value <= SliceUtils.toLong(max);
     }
 }
