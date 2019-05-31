@@ -20,6 +20,7 @@ import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
 import io.prestosql.spi.function.SqlType;
+import io.prestosql.spi.type.StandardTypes;
 
 /**
  * @author jinhai
@@ -32,7 +33,7 @@ public class ExtStringFunctions
     @Description("compute md5 hash")
     @ScalarFunction
     @LiteralParameters("x")
-    @SqlType("varchar(x)")
+    @SqlType(StandardTypes.VARCHAR)
     public static Slice md5(@SqlType("varchar(x)") Slice slice)
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(slice.getBytes()).toString());
