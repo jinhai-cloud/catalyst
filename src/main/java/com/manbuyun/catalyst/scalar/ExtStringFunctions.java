@@ -38,4 +38,20 @@ public class ExtStringFunctions
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(slice.getBytes()).toString());
     }
+
+    @Description("compute md5 hash")
+    @ScalarFunction
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice md5(@SqlType(StandardTypes.DOUBLE) double num)
+    {
+        return Slices.utf8Slice(Hashing.md5().hashBytes(Double.toString(num).getBytes()).toString());
+    }
+
+    @Description("compute md5 hash")
+    @ScalarFunction
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice md5(@SqlType(StandardTypes.INTEGER) long num)
+    {
+        return Slices.utf8Slice(Hashing.md5().hashBytes(Long.toString(num).getBytes()).toString());
+    }
 }
