@@ -14,6 +14,7 @@
 package com.manbuyun.catalyst.scalar;
 
 import com.google.common.hash.Hashing;
+import com.google.common.primitives.Ints;
 import io.airlift.slice.Slice;
 import io.airlift.slice.Slices;
 import io.prestosql.spi.function.Description;
@@ -50,8 +51,45 @@ public class ExtStringFunctions
     @Description("compute md5 hash")
     @ScalarFunction
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice md5(@SqlType(StandardTypes.INTEGER) long num)
+    public static Slice md5(@SqlType(StandardTypes.BIGINT) long num)
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(Long.toString(num).getBytes()).toString());
+    }
+
+    @Description("returns index of first occurrence of a substring (or 0 if not found)")
+    @ScalarFunction
+    @LiteralParameters({"x", "y"})
+    @SqlType(StandardTypes.BIGINT)
+    public static long locate(@SqlType("varchar(x)") Slice substring, @SqlType("varchar(y)") Slice string)
+    {
+        return findString(string.toStringUtf8(), substring.toStringUtf8(), 0) + 1;
+    }
+
+    @Description("returns index of first occurrence of a substring (or 0 if not found)")
+    @ScalarFunction
+    @LiteralParameters({"x", "y"})
+    @SqlType(StandardTypes.BIGINT)
+    public static long locate(@SqlType("varchar(x)") Slice substring, @SqlType("varchar(y)") Slice string, @SqlType(StandardTypes.BIGINT) long start)
+    {
+        return findString(string.toStringUtf8(), substring.toStringUtf8(), Ints.saturatedCast(start) - 1) + 1;
+    }
+
+    public static int findString(String string, String substring, int start)
+    {
+        int length = string.length() - start;
+        if (start < 0 || length <= 0 || length < substring.length()) {
+            return -1;
+        }
+        if (substring.length() == 0) {
+            return 0;
+        }
+
+        int index = string.indexOf(substring, start);
+        if (index == -1) {
+            return index;
+        }
+        else {
+            return string.codePointCount(0, index);
+        }
     }
 }
