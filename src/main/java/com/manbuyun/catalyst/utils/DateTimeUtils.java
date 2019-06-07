@@ -56,6 +56,11 @@ public class DateTimeUtils
         }
     }
 
+    public static String toString(long instant)
+    {
+        return STANDARD_TIME_FORMATTER.print(instant);
+    }
+
     public static long unpackMillisUtc(long dateTimeWithTimeZone)
     {
         return dateTimeWithTimeZone >> MILLIS_SHIFT;

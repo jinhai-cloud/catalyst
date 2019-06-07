@@ -196,4 +196,20 @@ public class ExtDateTimeFunctions
         DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
         return Math.abs(Days.daysBetween(dt1, dt2).getDays());
     }
+
+    @ScalarFunction("from_unixtime")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice fromUnixTime(@SqlType(StandardTypes.BIGINT) long unixTime)
+    {
+        return utf8Slice(DateTimeUtils.toString(unixTime * 1000));
+    }
+
+    @ScalarFunction("from_unixtime")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice fromUnixTime(@SqlType(StandardTypes.BIGINT) long unixTime, @SqlType("varchar(x)") Slice slice)
+    {
+        DateTime dt = new DateTime(unixTime * 1000);
+        return utf8Slice(dt.toString(slice.toStringUtf8()));
+    }
 }
