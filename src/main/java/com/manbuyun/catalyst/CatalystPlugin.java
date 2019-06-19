@@ -14,9 +14,7 @@
 package com.manbuyun.catalyst;
 
 import com.google.common.collect.ImmutableSet;
-import com.manbuyun.catalyst.scalar.ExtBigintOperators;
 import com.manbuyun.catalyst.scalar.ExtDateTimeFunctions;
-import com.manbuyun.catalyst.scalar.ExtIntegerOperators;
 import com.manbuyun.catalyst.scalar.ExtMathFunctions;
 import com.manbuyun.catalyst.scalar.ExtStringFunctions;
 import com.manbuyun.catalyst.scalar.ExtUrlFunctions;
@@ -36,8 +34,6 @@ public class CatalystPlugin
     {
         return ImmutableSet.<Class<?>>builder()
                 .add(ExtDateTimeFunctions.class)
-                .add(ExtBigintOperators.class)
-                .add(ExtIntegerOperators.class)
                 .add(ExtUrlFunctions.class)
                 .add(ExtStringFunctions.class)
                 .add(ExtMathFunctions.class)
