@@ -95,7 +95,7 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @ScalarFunction("to_date")
+    @ScalarFunction(value = "to_date", alias = "date")
     @LiteralParameters("x")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice toDateStr(@SqlType("varchar(x)") Slice slice)
@@ -104,7 +104,7 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @ScalarFunction("to_date")
+    @ScalarFunction(value = "to_date", alias = "date")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice toDate(@SqlType(StandardTypes.DATE) long date)
     {
@@ -112,7 +112,7 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @ScalarFunction("to_date")
+    @ScalarFunction(value = "to_date", alias = "date")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice toDateUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
     {
