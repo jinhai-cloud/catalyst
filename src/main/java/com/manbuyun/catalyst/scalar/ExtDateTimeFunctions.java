@@ -212,4 +212,13 @@ public class ExtDateTimeFunctions
         DateTime dt = new DateTime(unixTime * 1000);
         return utf8Slice(dt.toString(slice.toStringUtf8()));
     }
+
+    @ScalarFunction("weekofyear")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long weekOfYear(@SqlType("varchar(x)") Slice slice)
+    {
+        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
+        return dt.getWeekOfWeekyear();
+    }
 }
