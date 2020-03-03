@@ -256,6 +256,13 @@ public class ExtDateTimeFunctions
     }
 
     @ScalarFunction("unix_timestamp")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    {
+        return timestamp / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
     public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
