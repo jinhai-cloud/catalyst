@@ -20,8 +20,6 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimePrinter;
 
-import static java.lang.String.format;
-
 /**
  * @author jinhai
  * @date 2019/05/20
@@ -48,12 +46,7 @@ public class DateTimeUtils
 
     public static DateTime parseDateTime(String value)
     {
-        try {
-            return STANDARD_TIME_FORMATTER.parseDateTime(value);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException(format("Invalid time '%s'", value));
-        }
+        return STANDARD_TIME_FORMATTER.parseDateTime(value);
     }
 
     public static String toString(long instant)

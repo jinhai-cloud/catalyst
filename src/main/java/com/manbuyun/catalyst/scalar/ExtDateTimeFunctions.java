@@ -15,6 +15,7 @@ package com.manbuyun.catalyst.scalar;
 
 import com.manbuyun.catalyst.utils.DateTimeUtils;
 import io.airlift.slice.Slice;
+import io.prestosql.spi.connector.ConnectorSession;
 import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
@@ -218,12 +219,25 @@ public class ExtDateTimeFunctions
     }
 
     @ScalarFunction("unix_timestamp")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp(ConnectorSession session)
+    {
+        return session.getStartTime() / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
-    public static long unixTimestamp(@SqlType("varchar(x)") Slice slice)
+    @SqlNullable
+    public static Long unixTimestamp(@SqlType("varchar(x)") Slice slice)
     {
-        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        return dt.getMillis() / 1000;
+        try {
+            DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
+            return dt.getMillis() / 1000;
+        }
+        catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     @ScalarFunction("unix_timestamp")
@@ -239,6 +253,14 @@ public class ExtDateTimeFunctions
         catch (ParseException e) {
             return null;
         }
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
+    {
+        return timestamp / 1000;
     }
 
     @ScalarFunction("weekofyear")
