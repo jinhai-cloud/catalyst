@@ -18,10 +18,14 @@ import io.airlift.slice.Slice;
 import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
+import io.prestosql.spi.function.SqlNullable;
 import io.prestosql.spi.function.SqlType;
 import io.prestosql.spi.type.StandardTypes;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+
+import java.text.ParseException;
 
 import static io.airlift.slice.Slices.utf8Slice;
 import static java.lang.Math.toIntExact;
@@ -213,6 +217,30 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(slice.toStringUtf8()));
     }
 
+    @ScalarFunction("unix_timestamp")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp(@SqlType("varchar(x)") Slice slice)
+    {
+        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
+        return dt.getMillis() / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @LiteralParameters({"x", "y"})
+    @SqlType(StandardTypes.BIGINT)
+    @SqlNullable
+    public static Long unixTimestamp(@SqlType("varchar(x)") Slice left, @SqlType("varchar(y)") Slice right)
+    {
+        try {
+            FastDateFormat instance = FastDateFormat.getInstance(right.toStringUtf8());
+            return instance.parse(left.toStringUtf8()).getTime() / 1000;
+        }
+        catch (ParseException e) {
+            return null;
+        }
+    }
+
     @ScalarFunction("weekofyear")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
@@ -220,5 +248,14 @@ public class ExtDateTimeFunctions
     {
         DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
         return dt.getWeekOfWeekyear();
+    }
+
+    @ScalarFunction("date_format")
+    @LiteralParameters({"x", "y"})
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice dateFormat(@SqlType("varchar(x)") Slice left, @SqlType("varchar(y)") Slice right)
+    {
+        DateTime dt = DateTimeUtils.parseDateTime(left.toStringUtf8());
+        return utf8Slice(dt.toString(right.toStringUtf8()));
     }
 }
