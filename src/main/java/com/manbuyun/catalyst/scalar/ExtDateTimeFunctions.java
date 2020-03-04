@@ -268,7 +268,7 @@ public class ExtDateTimeFunctions
     public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
     {
         return timestamp / 1000;
-    }git
+    }
 
     @ScalarFunction("weekofyear")
     @LiteralParameters("x")
