@@ -37,9 +37,9 @@ public class ExtUrlFunctions
     @SqlNullable
     @ScalarFunction("parse_url")
     @Description("Extracts a part from a URL")
-    @LiteralParameters("x")
+    @LiteralParameters({"x", "y"})
     @SqlType("varchar(x)")
-    public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(x)") Slice partToExtract)
+    public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(y)") Slice partToExtract)
     {
         URL url = parseUrl(urlStr);
         if (url == null || partToExtract.length() == 0) {
@@ -47,26 +47,37 @@ public class ExtUrlFunctions
         }
 
         String part = partToExtract.toStringUtf8();
+        String result = null;
         switch (part) {
             case "HOST":
-                return utf8Slice(url.getHost());
+                result = url.getHost();
+                break;
             case "PATH":
-                return utf8Slice(url.getPath());
+                result = url.getPath();
+                break;
             case "QUERY":
-                return utf8Slice(url.getQuery());
+                result = url.getQuery();
+                break;
             case "REF":
-                return utf8Slice(url.getRef());
+                result = url.getRef();
+                break;
             case "PROTOCOL":
-                return utf8Slice(url.getProtocol());
+                result = url.getProtocol();
+                break;
             case "FILE":
-                return utf8Slice(url.getFile());
+                result = url.getFile();
+                break;
             case "AUTHORITY":
-                return utf8Slice(url.getAuthority());
+                result = url.getAuthority();
+                break;
             case "USERINFO":
-                return utf8Slice(url.getUserInfo());
+                result = url.getUserInfo();
+                break;
+            default:
+                break;
         }
 
-        return null;
+        return result != null ? utf8Slice(result) : null;
     }
 
     @Nullable
