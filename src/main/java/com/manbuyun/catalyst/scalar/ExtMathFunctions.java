@@ -14,11 +14,11 @@
 package com.manbuyun.catalyst.scalar;
 
 import com.google.common.math.DoubleMath;
-import com.manbuyun.catalyst.utils.SliceUtils;
+import com.google.common.primitives.Doubles;
 import io.airlift.slice.Slice;
-import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
+import io.prestosql.spi.function.SqlNullable;
 import io.prestosql.spi.function.SqlType;
 import io.prestosql.spi.type.StandardTypes;
 
@@ -32,21 +32,34 @@ public class ExtMathFunctions
 {
     private ExtMathFunctions() {}
 
-    @Description("round to integer by dropping digits after decimal point")
+    @SqlNullable
     @ScalarFunction("int")
     @SqlType(StandardTypes.INTEGER)
-    public static long toInt(@SqlType(StandardTypes.DOUBLE) double num)
+    public static Long toInt(@SqlType(StandardTypes.DOUBLE) double num)
     {
-        return DoubleMath.roundToInt(num, RoundingMode.DOWN);
+        try {
+            return (long) DoubleMath.roundToInt(num, RoundingMode.DOWN);
+        }
+        catch (ArithmeticException e) {
+            return null;
+        }
     }
 
-    @Description("round to integer by dropping digits after decimal point")
+    @SqlNullable
     @ScalarFunction("int")
     @LiteralParameters("x")
     @SqlType(StandardTypes.INTEGER)
-    public static long toInt(@SqlType("varchar(x)") Slice slice)
+    public static Long toInt(@SqlType("varchar(x)") Slice slice)
     {
-        double num = SliceUtils.toDouble(slice);
-        return DoubleMath.roundToInt(num, RoundingMode.DOWN);
+        Double num = Doubles.tryParse(slice.toStringUtf8());
+        if (num != null) {
+            try {
+                return (long) DoubleMath.roundToInt(num, RoundingMode.DOWN);
+            }
+            catch (ArithmeticException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 }
