@@ -232,10 +232,10 @@ public class ExtDateTimeFunctions
     public static Long unixTimestamp(@SqlType("varchar(x)") Slice slice)
     {
         try {
-            DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-            return dt.getMillis() / 1000;
+            FastDateFormat instance = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+            return instance.parse(slice.toStringUtf8()).getTime() / 1000;
         }
-        catch (IllegalArgumentException e) {
+        catch (ParseException e) {
             return null;
         }
     }
@@ -268,7 +268,7 @@ public class ExtDateTimeFunctions
     public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
     {
         return timestamp / 1000;
-    }
+    }git
 
     @ScalarFunction("weekofyear")
     @LiteralParameters("x")
