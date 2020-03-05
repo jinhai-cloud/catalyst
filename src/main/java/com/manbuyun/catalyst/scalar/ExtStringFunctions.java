@@ -34,7 +34,7 @@ public class ExtStringFunctions
     @Description("compute md5 hash")
     @ScalarFunction
     @LiteralParameters("x")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(32)")
     public static Slice md5(@SqlType("varchar(x)") Slice slice)
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(slice.getBytes()).toString());
@@ -42,7 +42,7 @@ public class ExtStringFunctions
 
     @Description("compute md5 hash")
     @ScalarFunction
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(32)")
     public static Slice md5(@SqlType(StandardTypes.DOUBLE) double num)
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(Double.toString(num).getBytes()).toString());
@@ -50,7 +50,7 @@ public class ExtStringFunctions
 
     @Description("compute md5 hash")
     @ScalarFunction
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(32)")
     public static Slice md5(@SqlType(StandardTypes.BIGINT) long num)
     {
         return Slices.utf8Slice(Hashing.md5().hashBytes(Long.toString(num).getBytes()).toString());
