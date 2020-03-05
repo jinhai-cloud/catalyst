@@ -74,7 +74,7 @@ public class ExtStringFunctions
         return findString(string.toStringUtf8(), substring.toStringUtf8(), Ints.saturatedCast(start) - 1) + 1;
     }
 
-    public static int findString(String string, String substring, int start)
+    private static int findString(String string, String substring, int start)
     {
         int length = string.length() - start;
         if (start < 0 || length <= 0 || length < substring.length()) {
