@@ -13,16 +13,19 @@
  */
 package com.manbuyun.catalyst.scalar;
 
+import io.airlift.concurrent.ThreadLocalCache;
 import io.airlift.slice.Slice;
-import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
 import io.prestosql.spi.function.SqlNullable;
 import io.prestosql.spi.function.SqlType;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.airlift.slice.Slices.utf8Slice;
 
@@ -34,9 +37,13 @@ public class ExtUrlFunctions
 {
     private ExtUrlFunctions() {}
 
+    private static final String REGEXPREFIX = "(&|^)";
+    private static final String REGEXSUBFIX = "=([^&]*)";
+
+    private static final ThreadLocalCache<String, Pattern> PATTERN_CACHE = new ThreadLocalCache<>(5, Pattern::compile);
+
     @SqlNullable
     @ScalarFunction("parse_url")
-    @Description("Extracts a part from a URL")
     @LiteralParameters({"x", "y"})
     @SqlType("varchar(x)")
     public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(y)") Slice partToExtract)
@@ -78,6 +85,28 @@ public class ExtUrlFunctions
         }
 
         return result != null ? utf8Slice(result) : null;
+    }
+
+    @SqlNullable
+    @ScalarFunction("parse_url")
+    @LiteralParameters({"x", "y", "z"})
+    @SqlType("varchar(x)")
+    public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(y)") Slice partToExtract, @SqlType("varchar(z)") Slice keyToExtract)
+    {
+        String part = partToExtract.toStringUtf8();
+        if (!StringUtils.equals(part, "QUERY")) {
+            return null;
+        }
+
+        URL url = parseUrl(urlStr);
+        if (url != null) {
+            Matcher matcher = PATTERN_CACHE.get(REGEXPREFIX + keyToExtract.toStringUtf8() + REGEXSUBFIX).matcher(url.getQuery());
+            if (matcher.find()) {
+                return utf8Slice(matcher.group(2));
+            }
+        }
+
+        return null;
     }
 
     @Nullable
