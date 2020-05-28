@@ -20,6 +20,9 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimePrinter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author jinhai
  * @date 2019/05/20
@@ -30,6 +33,8 @@ public class DateTimeUtils
 
     private static final DateTimeFormatter STANDARD_TIME_FORMATTER;
     private static final int MILLIS_SHIFT = 12;
+
+    private static final Pattern DAY_PATTERN = Pattern.compile("^(\\d{4}-\\d{1,2}-\\d{1,2})[ T]");
 
     static {
         DateTimeParser[] parsers = {
@@ -57,5 +62,24 @@ public class DateTimeUtils
     public static long unpackMillisUtc(long dateTimeWithTimeZone)
     {
         return dateTimeWithTimeZone >> MILLIS_SHIFT;
+    }
+
+    /**
+     * `yyyy`
+     * `yyyy-[m]m`
+     * `yyyy-[m]m-[d]d`
+     * `yyyy-[m]m-[d]d `
+     * `yyyy-[m]m-[d]d *`
+     * `yyyy-[m]m-[d]dT*`
+     * @param value
+     * @return
+     */
+    public static String extractDay(String value)
+    {
+        Matcher matcher = DAY_PATTERN.matcher(value);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 }

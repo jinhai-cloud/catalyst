@@ -42,30 +42,40 @@ public class ExtDateTimeFunctions
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
 
-    @Description("add the specified amount of time to the given time")
-    @LiteralParameters("x")
     @ScalarFunction("date_add")
-    @SqlType(StandardTypes.VARCHAR)
+    @LiteralParameters("x")
+    @SqlNullable
+    @SqlType("varchar(10)")
     public static Slice dateAddStr(@SqlType("varchar(x)") Slice slice, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt1 = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        DateTime dt2 = dt1.plusDays(toIntExact(value));
-        return utf8Slice(dt2.toString(YYYY_MM_DD));
+        String extract = DateTimeUtils.extractDay(slice.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
+            DateTime dt2 = dt1.plusDays(toIntExact(value));
+            return utf8Slice(dt2.toString(YYYY_MM_DD));
+        }
+        return null;
     }
 
-    @Description("add the specified amount of time to the given time")
     @ScalarFunction("date_add")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(10)")
     public static Slice dateAdd(@SqlType(StandardTypes.DATE) long date, @SqlType(StandardTypes.BIGINT) long value)
     {
         DateTime dt = new DateTime(DAYS.toMillis(date)).plusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @Description("add the specified amount of time to the given time")
     @ScalarFunction("date_add")
-    @SqlType(StandardTypes.VARCHAR)
-    public static Slice dateAddUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
+    @SqlType("varchar(10)")
+    public static Slice dateAddTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    {
+        DateTime dt = new DateTime(timestamp).plusDays(toIntExact(value));
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
+    @ScalarFunction("date_add")
+    @SqlType("varchar(10)")
+    public static Slice dateAddTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
         DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).plusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
