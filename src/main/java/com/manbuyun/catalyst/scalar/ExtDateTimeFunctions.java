@@ -123,15 +123,19 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("to_date")
     @LiteralParameters("x")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlNullable
+    @SqlType("varchar(10)")
     public static Slice toDateStr(@SqlType("varchar(x)") Slice slice)
     {
-        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        String extract = DateTimeUtils.extractDay(slice.toStringUtf8());
+        if (extract != null) {
+            return utf8Slice(extract);
+        }
+        return null;
     }
 
     @ScalarFunction("to_date")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(10)")
     public static Slice toDate(@SqlType(StandardTypes.DATE) long date)
     {
         DateTime dt = new DateTime(DAYS.toMillis(date));
@@ -139,8 +143,16 @@ public class ExtDateTimeFunctions
     }
 
     @ScalarFunction("to_date")
-    @SqlType(StandardTypes.VARCHAR)
-    public static Slice toDateUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
+    @SqlType("varchar(10)")
+    public static Slice toDateTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    {
+        DateTime dt = new DateTime(timestamp);
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
+    @ScalarFunction("to_date")
+    @SqlType("varchar(10)")
+    public static Slice toDateTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
     {
         DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone));
         return utf8Slice(dt.toString(YYYY_MM_DD));
