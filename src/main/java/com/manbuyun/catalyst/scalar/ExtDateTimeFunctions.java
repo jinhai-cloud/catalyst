@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 
 import static io.airlift.slice.Slices.utf8Slice;
 import static java.lang.Math.toIntExact;
@@ -50,9 +51,9 @@ public class ExtDateTimeFunctions
     {
         String extract = DateTimeUtils.extractDay(slice.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
-            DateTime dt2 = dt1.plusDays(toIntExact(value));
-            return utf8Slice(dt2.toString(YYYY_MM_DD));
+            LocalDate dt1 = LocalDate.parse(extract);
+            LocalDate dt2 = dt1.plusDays(toIntExact(value));
+            return utf8Slice(dt2.toString());
         }
         return null;
     }
