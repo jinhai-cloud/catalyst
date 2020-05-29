@@ -82,30 +82,40 @@ public class ExtDateTimeFunctions
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @Description("sub the specified amount of time to the given time")
-    @LiteralParameters("x")
     @ScalarFunction("date_sub")
-    @SqlType(StandardTypes.VARCHAR)
+    @LiteralParameters("x")
+    @SqlNullable
+    @SqlType("varchar(10)")
     public static Slice dateSubStr(@SqlType("varchar(x)") Slice slice, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt1 = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        DateTime dt2 = dt1.minusDays(toIntExact(value));
-        return utf8Slice(dt2.toString(YYYY_MM_DD));
+        String extract = DateTimeUtils.extractDay(slice.toStringUtf8());
+        if (extract != null) {
+            LocalDate dt1 = LocalDate.parse(extract);
+            LocalDate dt2 = dt1.minusDays(toIntExact(value));
+            return utf8Slice(dt2.toString());
+        }
+        return null;
     }
 
-    @Description("sub the specified amount of time to the given time")
     @ScalarFunction("date_sub")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(10)")
     public static Slice dateSub(@SqlType(StandardTypes.DATE) long date, @SqlType(StandardTypes.BIGINT) long value)
     {
         DateTime dt = new DateTime(DAYS.toMillis(date)).minusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
     }
 
-    @Description("sub the specified amount of time to the given time")
     @ScalarFunction("date_sub")
-    @SqlType(StandardTypes.VARCHAR)
-    public static Slice dateSubUnix(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
+    @SqlType("varchar(10)")
+    public static Slice dateSubTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
+    {
+        DateTime dt = new DateTime(timestamp).minusDays(toIntExact(value));
+        return utf8Slice(dt.toString(YYYY_MM_DD));
+    }
+
+    @ScalarFunction("date_sub")
+    @SqlType("varchar(10)")
+    public static Slice dateSubTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
         DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).minusDays(toIntExact(value));
         return utf8Slice(dt.toString(YYYY_MM_DD));
