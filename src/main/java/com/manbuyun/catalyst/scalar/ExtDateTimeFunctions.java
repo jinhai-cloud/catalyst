@@ -16,7 +16,6 @@ package com.manbuyun.catalyst.scalar;
 import com.manbuyun.catalyst.utils.DateTimeUtils;
 import io.airlift.slice.Slice;
 import io.prestosql.spi.connector.ConnectorSession;
-import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
 import io.prestosql.spi.function.SqlNullable;
@@ -216,37 +215,79 @@ public class ExtDateTimeFunctions
         return null;
     }
 
-    @Description("difference of the given dates in the given unit")
     @ScalarFunction("datediff")
     @LiteralParameters("x")
+    @SqlNullable
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff5(@SqlType(StandardTypes.DATE) long left, @SqlType("varchar(x)") Slice right)
+    public static Long dateDiff6(@SqlType(StandardTypes.DATE) long left, @SqlType("varchar(x)") Slice right)
     {
-        DateTime dt1 = new DateTime(DAYS.toMillis(left));
-        DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
-        return Days.daysBetween(dt2, dt1).getDays();
+        String extract = DateTimeUtils.extractDay(right.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = new DateTime(DAYS.toMillis(left));
+            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
+            return (long) Days.daysBetween(dt2, dt1).getDays();
+        }
+        return null;
     }
 
-    @Description("difference of the given dates in the given unit")
     @ScalarFunction("datediff")
     @LiteralParameters("x")
+    @SqlNullable
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff6(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
+    public static Long dateDiff7(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP) long right)
     {
-        DateTime dt1 = DateTimeUtils.parseDateTime(left.toStringUtf8());
-        DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
-        return Days.daysBetween(dt2, dt1).getDays();
+        String extract = DateTimeUtils.extractDay(left.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
+            DateTime dt2 = new DateTime(right);
+            return (long) Days.daysBetween(dt2, dt1).getDays();
+        }
+        return null;
     }
 
-    @Description("difference of the given dates in the given unit")
     @ScalarFunction("datediff")
     @LiteralParameters("x")
+    @SqlNullable
     @SqlType(StandardTypes.BIGINT)
-    public static long dateDiff7(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType("varchar(x)") Slice right)
+    public static Long dateDiff8(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType("varchar(x)") Slice right)
     {
-        DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
-        DateTime dt2 = DateTimeUtils.parseDateTime(right.toStringUtf8());
-        return Days.daysBetween(dt2, dt1).getDays();
+        String extract = DateTimeUtils.extractDay(right.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = new DateTime(left);
+            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
+            return (long) Days.daysBetween(dt2, dt1).getDays();
+        }
+        return null;
+    }
+
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlNullable
+    @SqlType(StandardTypes.BIGINT)
+    public static Long dateDiff9(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
+    {
+        String extract = DateTimeUtils.extractDay(left.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
+            DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
+            return (long) Days.daysBetween(dt2, dt1).getDays();
+        }
+        return null;
+    }
+
+    @ScalarFunction("datediff")
+    @LiteralParameters("x")
+    @SqlNullable
+    @SqlType(StandardTypes.BIGINT)
+    public static Long dateDiff10(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType("varchar(x)") Slice right)
+    {
+        String extract = DateTimeUtils.extractDay(right.toStringUtf8());
+        if (extract != null) {
+            DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
+            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
+            return (long) Days.daysBetween(dt2, dt1).getDays();
+        }
+        return null;
     }
 
     @ScalarFunction("from_unixtime")
