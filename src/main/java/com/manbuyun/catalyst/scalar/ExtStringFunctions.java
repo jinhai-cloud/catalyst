@@ -17,7 +17,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 import io.airlift.slice.Slice;
 import io.airlift.slice.Slices;
-import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.LiteralParameters;
 import io.prestosql.spi.function.ScalarFunction;
 import io.prestosql.spi.function.SqlType;
@@ -31,7 +30,6 @@ public class ExtStringFunctions
 {
     private ExtStringFunctions() {}
 
-    @Description("compute md5 hash")
     @ScalarFunction
     @LiteralParameters("x")
     @SqlType("varchar(32)")
@@ -40,7 +38,6 @@ public class ExtStringFunctions
         return Slices.utf8Slice(Hashing.md5().hashBytes(slice.getBytes()).toString());
     }
 
-    @Description("compute md5 hash")
     @ScalarFunction
     @SqlType("varchar(32)")
     public static Slice md5(@SqlType(StandardTypes.DOUBLE) double num)
@@ -48,7 +45,6 @@ public class ExtStringFunctions
         return Slices.utf8Slice(Hashing.md5().hashBytes(Double.toString(num).getBytes()).toString());
     }
 
-    @Description("compute md5 hash")
     @ScalarFunction
     @SqlType("varchar(32)")
     public static Slice md5(@SqlType(StandardTypes.BIGINT) long num)
@@ -56,7 +52,6 @@ public class ExtStringFunctions
         return Slices.utf8Slice(Hashing.md5().hashBytes(Long.toString(num).getBytes()).toString());
     }
 
-    @Description("returns index of first occurrence of a substring (or 0 if not found)")
     @ScalarFunction
     @LiteralParameters({"x", "y"})
     @SqlType(StandardTypes.BIGINT)
@@ -65,7 +60,6 @@ public class ExtStringFunctions
         return findString(string.toStringUtf8(), substring.toStringUtf8(), 0) + 1;
     }
 
-    @Description("returns index of first occurrence of a substring (or 0 if not found)")
     @ScalarFunction
     @LiteralParameters({"x", "y"})
     @SqlType(StandardTypes.BIGINT)

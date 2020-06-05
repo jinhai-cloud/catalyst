@@ -32,8 +32,8 @@ public class ExtMathFunctions
 {
     private ExtMathFunctions() {}
 
-    @SqlNullable
     @ScalarFunction("int")
+    @SqlNullable
     @SqlType(StandardTypes.INTEGER)
     public static Long toInt(@SqlType(StandardTypes.DOUBLE) double num)
     {
@@ -45,9 +45,9 @@ public class ExtMathFunctions
         }
     }
 
-    @SqlNullable
     @ScalarFunction("int")
     @LiteralParameters("x")
+    @SqlNullable
     @SqlType(StandardTypes.INTEGER)
     public static Long toInt(@SqlType("varchar(x)") Slice slice)
     {

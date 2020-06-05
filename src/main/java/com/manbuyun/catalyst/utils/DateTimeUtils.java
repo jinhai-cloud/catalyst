@@ -34,7 +34,7 @@ public class DateTimeUtils
     private static final DateTimeFormatter STANDARD_TIME_FORMATTER;
     private static final int MILLIS_SHIFT = 12;
 
-    private static final Pattern DAY_PATTERN = Pattern.compile("^(\\d{4}-\\d{1,2}-\\d{1,2})[ T]");
+    private static final Pattern DAY_PATTERN = Pattern.compile("^(\\d{4}-\\d{1,2}-\\d{1,2})");
 
     static {
         DateTimeParser[] parsers = {
@@ -65,12 +65,7 @@ public class DateTimeUtils
     }
 
     /**
-     * `yyyy`
-     * `yyyy-[m]m`
-     * `yyyy-[m]m-[d]d`
-     * `yyyy-[m]m-[d]d `
-     * `yyyy-[m]m-[d]d *`
-     * `yyyy-[m]m-[d]dT*`
+     * `yyyy-[m]m-[d]*`
      * @param value
      * @return
      */

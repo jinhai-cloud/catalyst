@@ -40,11 +40,11 @@ public class ExtUrlFunctions
     private static final String REGEXPREFIX = "(&|^)";
     private static final String REGEXSUBFIX = "=([^&]*)";
 
-    private static final ThreadLocalCache<String, Pattern> PATTERN_CACHE = new ThreadLocalCache<>(5, Pattern::compile);
+    private static final ThreadLocalCache<String, Pattern> PATTERN_CACHE = new ThreadLocalCache<>(3, Pattern::compile);
 
-    @SqlNullable
     @ScalarFunction("parse_url")
     @LiteralParameters({"x", "y"})
+    @SqlNullable
     @SqlType("varchar(x)")
     public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(y)") Slice partToExtract)
     {
@@ -87,9 +87,9 @@ public class ExtUrlFunctions
         return result != null ? utf8Slice(result) : null;
     }
 
-    @SqlNullable
     @ScalarFunction("parse_url")
     @LiteralParameters({"x", "y", "z"})
+    @SqlNullable
     @SqlType("varchar(x)")
     public static Slice parseUrl(@SqlType("varchar(x)") Slice urlStr, @SqlType("varchar(y)") Slice partToExtract, @SqlType("varchar(z)") Slice keyToExtract)
     {
@@ -99,7 +99,7 @@ public class ExtUrlFunctions
         }
 
         URL url = parseUrl(urlStr);
-        if (url != null) {
+        if (url != null && url.getQuery() != null) {
             Matcher matcher = PATTERN_CACHE.get(REGEXPREFIX + keyToExtract.toStringUtf8() + REGEXSUBFIX).matcher(url.getQuery());
             if (matcher.find()) {
                 return utf8Slice(matcher.group(2));
