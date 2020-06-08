@@ -54,7 +54,7 @@ public class ExtStringFunctions
 
     @ScalarFunction
     @LiteralParameters({"x", "y"})
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static long locate(@SqlType("varchar(x)") Slice substring, @SqlType("varchar(y)") Slice string)
     {
         return findString(string.toStringUtf8(), substring.toStringUtf8(), 0) + 1;
@@ -62,7 +62,7 @@ public class ExtStringFunctions
 
     @ScalarFunction
     @LiteralParameters({"x", "y"})
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static long locate(@SqlType("varchar(x)") Slice substring, @SqlType("varchar(y)") Slice string, @SqlType(StandardTypes.BIGINT) long start)
     {
         return findString(string.toStringUtf8(), substring.toStringUtf8(), Ints.saturatedCast(start) - 1) + 1;
