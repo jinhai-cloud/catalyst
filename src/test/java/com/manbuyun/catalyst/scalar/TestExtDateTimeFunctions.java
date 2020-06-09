@@ -59,18 +59,18 @@ public class TestExtDateTimeFunctions
     @Test
     public void testDateFormat()
     {
-        assertFunction("date_format('12:23:34', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), null);
-        assertFunction("date_format('2019-09-12 12:23', 'yyyy-MM-dd HH')", createVarcharType(13), "2019-09-12 12");
-        assertFunction("date_format('2019-09-12 12:23', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2019-09-12 12:23");
-        assertFunction("date_format('2019-09-12 12:23:34', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2019-09-12 12:23");
-        assertFunction("date_format('2019-09-12 12:23:34', 'yyyy-MM-dd HH:mm:00')", createVarcharType(19), "2019-09-12 12:23:00");
-        assertFunction("date_format('2019-09-12 12:23:34', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2019-09-12 12:23:34");
-        assertFunction("date_format('2019-09-12 12:23:34.345', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2019-09-12 12:23:34");
+        assertFunction("date_format('10:30:15', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), null);
+        assertFunction("date_format('2020-06-18 10:30', 'yyyy-MM-dd HH')", createVarcharType(13), "2020-06-18 10");
+        assertFunction("date_format('2020-06-18 10:30', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2020-06-18 10:30");
+        assertFunction("date_format('2020-06-18 10:30:15', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2020-06-18 10:30");
+        assertFunction("date_format('2020-06-18 10:30:15', 'yyyy-MM-dd HH:mm:00')", createVarcharType(19), "2020-06-18 10:30:00");
+        assertFunction("date_format('2020-06-18 10:30:15', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2020-06-18 10:30:15");
+        assertFunction("date_format('2020-06-18 10:30:15.345', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2020-06-18 10:30:15");
 
-        assertFunction("date_format('2020-10-02T15:23:00.000+03:00', 'yyyy-MM-dd HH:mm:00')", createVarcharType(19), "2020-10-02 20:23:00");
-        assertFunction("date_format('2019-09-12T12:23:34', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2019-09-12 12:23");
-        assertFunction("date_format('2019-09-12X12:23:34', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
-        assertFunction("date_format('2019-09-12T12:23:3433', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
-        assertFunction("date_format('2019-09-12T12:23:34.333', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2019-09-12 12:23");
+        assertFunction("date_format('2020-06-18T10:30:15.345+03:00', 'yyyy-MM-dd HH:mm:00')", createVarcharType(19), "2020-06-18 15:30:00");
+        assertFunction("date_format('2020-06-18T10:30:15', 'yyyy-MM-dd HH:mm')", createVarcharType(16), "2020-06-18 10:30");
+        assertFunction("date_format('2020-06-18X10:30:15', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
+        assertFunction("date_format('2020-06-18T10:30:1534', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
+        assertFunction("date_format('2020-06-18T10:30:15.345', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2020-06-18 10:30:15");
     }
 }
