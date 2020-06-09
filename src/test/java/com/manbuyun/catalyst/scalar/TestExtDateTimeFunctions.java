@@ -15,7 +15,10 @@ package com.manbuyun.catalyst.scalar;
 
 import org.testng.annotations.Test;
 
+import java.time.LocalDate;
+
 import static io.prestosql.spi.type.VarcharType.createVarcharType;
+import static java.lang.String.format;
 
 /**
  * @author jinhai
@@ -24,9 +27,32 @@ import static io.prestosql.spi.type.VarcharType.createVarcharType;
 public class TestExtDateTimeFunctions
         extends TestFunctionsBase
 {
+    private static final String dt1 = "2020-06-08";
+    private static final String dt2 = "2020-06-08 10";
+    private static final String dt3 = "2020-06-08 10:30";
+    private static final String dt4 = "2020-06-08 10:30:15";
+    private static final String dt5 = "2020-06-08T10:30:15";
+    private static final String dt6 = "2020-06-08X10:30:15";
+    private static final String dt7 = "2020-06-08 X10:30:15";
+    private static final String dt8 = "2020-06-08 10:30:15.258";
+    private static final String dt9 = "2020-06-08T10:30:15.258";
+    private static final String dt10 = "2020-06-08T10:30:15258";
+    private static final String dt11 = "2020-06-08T10:30:15.258+02:00";
+
+    private static final String dt20 = "TIMESTAMP '2020-06-08 10:30:15'";
+    private static final String dt21 = "DATE '2020-06-08'";
+
     @Test
     public void testDateTime()
     {
-        assertFunction("date_sub('2019-05-20 10:01', 3)", createVarcharType(10), "2019-05-17");
+        assertFunction(format("date_add('%s', 3)", dt3), createVarcharType(10), "2020-06-11");
+        assertFunction(format("date_add('%s', 3)", dt5), createVarcharType(10), "2020-06-11");
+        assertFunction(format("date_add('%s', 3)", dt6), createVarcharType(10), "2020-06-11");
+        assertFunction(format("date_add('%s', 3)", dt7), createVarcharType(10), "2020-06-11");
+
+        assertFunction("date_add(current_timestamp, 3)", createVarcharType(10), LocalDate.now().plusDays(3).toString());
+        assertFunction("date_add(current_date, 3)", createVarcharType(10), LocalDate.now().plusDays(3).toString());
+        assertFunction(format("date_add(%s, 3)", dt20), createVarcharType(10), "2020-06-11");
+        assertFunction(format("date_add(%s, 3)", dt21), createVarcharType(10), "2020-06-11");
     }
 }

@@ -15,7 +15,12 @@ package com.manbuyun.catalyst.scalar;
 
 import com.manbuyun.catalyst.CatalystPlugin;
 import io.prestosql.operator.scalar.AbstractTestFunctions;
+import io.prestosql.spi.type.TimeZoneKey;
 import org.testng.annotations.BeforeClass;
+
+import java.util.TimeZone;
+
+import static io.prestosql.testing.TestingSession.testSessionBuilder;
 
 /**
  * @author jinhai
@@ -24,6 +29,13 @@ import org.testng.annotations.BeforeClass;
 public class TestFunctionsBase
         extends AbstractTestFunctions
 {
+    protected TestFunctionsBase()
+    {
+        super(testSessionBuilder()
+                .setTimeZoneKey(TimeZoneKey.getTimeZoneKey(TimeZone.getDefault().getID()))
+                .build());
+    }
+
     @BeforeClass
     public void setup()
     {

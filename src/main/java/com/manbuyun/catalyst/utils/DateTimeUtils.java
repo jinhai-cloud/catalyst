@@ -65,7 +65,7 @@ public class DateTimeUtils
     }
 
     /**
-     * `yyyy-[m]m-[d]*`
+     * `yyyy-m[m]-d[d]*`
      * @param value
      * @return
      */
