@@ -17,9 +17,9 @@ import org.testng.annotations.Test;
 
 import java.time.LocalDate;
 
+import static io.prestosql.spi.type.BigintType.BIGINT;
 import static io.prestosql.spi.type.IntegerType.INTEGER;
 import static io.prestosql.spi.type.VarcharType.createVarcharType;
-import static java.lang.String.format;
 
 /**
  * @author jinhai
@@ -28,33 +28,74 @@ import static java.lang.String.format;
 public class TestExtDateTimeFunctions
         extends TestFunctionsBase
 {
-    private static final String dt1 = "2020-06-08";
-    private static final String dt2 = "2020-06-08 10";
-    private static final String dt3 = "2020-06-08 10:30";
-    private static final String dt4 = "2020-06-08 10:30:15";
-    private static final String dt5 = "2020-06-08T10:30:15";
-    private static final String dt6 = "2020-06-08X10:30:15";
-    private static final String dt7 = "2020-06-08 X10:30:15";
-    private static final String dt8 = "2020-06-08 10:30:15.258";
-    private static final String dt9 = "2020-06-08T10:30:15.258";
-    private static final String dt10 = "2020-06-08T10:30:15258";
-    private static final String dt11 = "2020-06-08T10:30:15.258+02:00";
-
-    private static final String dt20 = "TIMESTAMP '2020-06-08 10:30:15'";
-    private static final String dt21 = "DATE '2020-06-08'";
-
     @Test
     public void testDateAdd()
     {
-        assertFunction(format("date_add('%s', 3)", dt3), createVarcharType(10), "2020-06-11");
-        assertFunction(format("date_add('%s', 3)", dt5), createVarcharType(10), "2020-06-11");
-        assertFunction(format("date_add('%s', 3)", dt6), createVarcharType(10), "2020-06-11");
-        assertFunction(format("date_add('%s', 3)", dt7), createVarcharType(10), "2020-06-11");
+        assertFunction("date_add('2020-06-18 10:30', 3)", createVarcharType(10), "2020-06-21");
+        assertFunction("date_add('2020-06-18T10:30:15', 3)", createVarcharType(10), "2020-06-21");
+        assertFunction("date_add('2020-06-18X10:30:15', 3)", createVarcharType(10), "2020-06-21");
+        assertFunction("date_add('2020-06-18 X10:30:15', 3)", createVarcharType(10), "2020-06-21");
 
         assertFunction("date_add(current_timestamp, 3)", createVarcharType(10), LocalDate.now().plusDays(3).toString());
         assertFunction("date_add(current_date, 3)", createVarcharType(10), LocalDate.now().plusDays(3).toString());
-        assertFunction(format("date_add(%s, 3)", dt20), createVarcharType(10), "2020-06-11");
-        assertFunction(format("date_add(%s, 3)", dt21), createVarcharType(10), "2020-06-11");
+        assertFunction("date_add(TIMESTAMP '2020-06-18 10:30:15', 3)", createVarcharType(10), "2020-06-21");
+        assertFunction("date_add(DATE '2020-06-18', 3)", createVarcharType(10), "2020-06-21");
+    }
+
+    @Test
+    public void testDateSub()
+    {
+        assertFunction("date_sub('2020-06-18 10:30', 3)", createVarcharType(10), "2020-06-15");
+        assertFunction("date_sub('2020-06-18T10:30:15', 3)", createVarcharType(10), "2020-06-15");
+        assertFunction("date_sub('2020-06-18X10:30:15', 3)", createVarcharType(10), "2020-06-15");
+        assertFunction("date_sub('2020-06-18 X10:30:15', 3)", createVarcharType(10), "2020-06-15");
+
+        assertFunction("date_sub(current_timestamp, 3)", createVarcharType(10), LocalDate.now().minusDays(3).toString());
+        assertFunction("date_sub(current_date, 3)", createVarcharType(10), LocalDate.now().minusDays(3).toString());
+        assertFunction("date_sub(TIMESTAMP '2020-06-18 10:30:15', 3)", createVarcharType(10), "2020-06-15");
+        assertFunction("date_sub(DATE '2020-06-18', 3)", createVarcharType(10), "2020-06-15");
+    }
+
+    @Test
+    public void testToDate()
+    {
+        assertFunction("to_date('2020-06-18 10:30')", createVarcharType(10), "2020-06-18");
+        assertFunction("to_date('2020-06-18T10:30:15')", createVarcharType(10), "2020-06-18");
+        assertFunction("to_date('2020-06-18X10:30:15')", createVarcharType(10), "2020-06-18");
+        assertFunction("to_date('2020-06-18 X10:30:15')", createVarcharType(10), "2020-06-18");
+
+        assertFunction("to_date(current_timestamp)", createVarcharType(10), LocalDate.now().toString());
+        assertFunction("to_date(current_date)", createVarcharType(10), LocalDate.now().toString());
+        assertFunction("to_date(TIMESTAMP '2020-06-18 10:30:15')", createVarcharType(10), "2020-06-18");
+        assertFunction("to_date(DATE '2020-06-18')", createVarcharType(10), "2020-06-18");
+    }
+
+    @Test
+    public void testDateDiff()
+    {
+    }
+
+    @Test
+    public void testFromUnixTime()
+    {
+        assertFunction("from_unixtime(1592447415)", createVarcharType(19), "2020-06-18 10:30:15");
+        assertFunction("from_unixtime(1592447415, 'yyyy-MM-dd HH')", createVarcharType(13), "2020-06-18 10");
+    }
+
+    @Test
+    public void testUnixTimestamp()
+    {
+        assertFunction("unix_timestamp('2020-06-18 10','yyyy-MM-dd HH:mm')", BIGINT, null);
+        assertFunction("unix_timestamp('2020-06-18 10:30','yyyy-MM-dd HH')", BIGINT, 1592445600L);
+        assertFunction("unix_timestamp('2020-06-18 10:30','yyyy-MM-dd HH:mm')", BIGINT, 1592447400L);
+        assertFunction("unix_timestamp('2020-06-18 10:30')", BIGINT, null);
+        assertFunction("unix_timestamp('2020-06-18 10:30:15')", BIGINT, 1592447415L);
+        assertFunction("unix_timestamp('2020-06-18 X10:30:15')", BIGINT, null);
+        assertFunction("unix_timestamp('2020-06-18T10:30:15')", BIGINT, null);
+        assertFunction("unix_timestamp('2020-06-18 10:30:15.345')", BIGINT, 1592447415L);
+
+        assertFunction("unix_timestamp(timestamp '2020-06-18 10:30:15', 'yyyy-MM-dd')", BIGINT, 1592447415L);
+        assertFunction("unix_timestamp(DATE '2020-06-18')", BIGINT, 1592409600L);
     }
 
     @Test

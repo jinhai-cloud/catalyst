@@ -291,7 +291,7 @@ public class ExtDateTimeFunctions
     }
 
     @ScalarFunction("from_unixtime")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(19)")
     public static Slice fromUnixTime(@SqlType(StandardTypes.BIGINT) long unixTime)
     {
         return utf8Slice(DateTimeUtils.toString(unixTime * 1000));
@@ -299,7 +299,7 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("from_unixtime")
     @LiteralParameters("x")
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlType("varchar(x)")
     public static Slice fromUnixTime(@SqlType(StandardTypes.BIGINT) long unixTime, @SqlType("varchar(x)") Slice slice)
     {
         DateTime dt = new DateTime(unixTime * 1000);
@@ -315,8 +315,8 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("unix_timestamp")
     @LiteralParameters("x")
-    @SqlType(StandardTypes.BIGINT)
     @SqlNullable
+    @SqlType(StandardTypes.BIGINT)
     public static Long unixTimestamp(@SqlType("varchar(x)") Slice slice)
     {
         try {
@@ -330,8 +330,8 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("unix_timestamp")
     @LiteralParameters({"x", "y"})
-    @SqlType(StandardTypes.BIGINT)
     @SqlNullable
+    @SqlType(StandardTypes.BIGINT)
     public static Long unixTimestamp(@SqlType("varchar(x)") Slice left, @SqlType("varchar(y)") Slice right)
     {
         try {
@@ -345,7 +345,39 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("unix_timestamp")
     @SqlType(StandardTypes.BIGINT)
-    public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    public static long unixTimestamp1(@SqlType(StandardTypes.DATE) long date)
+    {
+        DateTime dt = new DateTime(DAYS.toMillis(date)).withTimeAtStartOfDay();
+        return dt.getMillis() / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp2(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
+    {
+        return timestamp / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp3(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
+    {
+        return DateTimeUtils.unpackMillisUtc(timestampWithTimeZone) / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp11(@SqlType(StandardTypes.DATE) long date, @SqlType("varchar(x)") Slice slice)
+    {
+        DateTime dt = new DateTime(DAYS.toMillis(date)).withTimeAtStartOfDay();
+        return dt.getMillis() / 1000;
+    }
+
+    @ScalarFunction("unix_timestamp")
+    @LiteralParameters("x")
+    @SqlType(StandardTypes.BIGINT)
+    public static long unixTimestamp22(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
     {
         return timestamp / 1000;
     }
@@ -353,9 +385,9 @@ public class ExtDateTimeFunctions
     @ScalarFunction("unix_timestamp")
     @LiteralParameters("x")
     @SqlType(StandardTypes.BIGINT)
-    public static long unixTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType("varchar(x)") Slice slice)
+    public static long unixTimestamp33(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType("varchar(x)") Slice slice)
     {
-        return timestamp / 1000;
+        return DateTimeUtils.unpackMillisUtc(timestampWithTimeZone) / 1000;
     }
 
     @ScalarFunction("date_format")
