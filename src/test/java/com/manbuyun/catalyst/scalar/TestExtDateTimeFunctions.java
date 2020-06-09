@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
 
 import java.time.LocalDate;
 
+import static io.prestosql.spi.type.IntegerType.INTEGER;
 import static io.prestosql.spi.type.VarcharType.createVarcharType;
 import static java.lang.String.format;
 
@@ -72,5 +73,14 @@ public class TestExtDateTimeFunctions
         assertFunction("date_format('2020-06-18X10:30:15', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
         assertFunction("date_format('2020-06-18T10:30:1534', 'yyyy-MM-dd HH:mm')", createVarcharType(16), null);
         assertFunction("date_format('2020-06-18T10:30:15.345', 'yyyy-MM-dd HH:mm:ss')", createVarcharType(19), "2020-06-18 10:30:15");
+    }
+
+    @Test
+    public void testWeekOfYear()
+    {
+        assertFunction("weekofyear('2020-06-18 10:30:15')", INTEGER, 25);
+        assertFunction("weekofyear('2020-06-18T10:30:15')", INTEGER, 25);
+        assertFunction("weekofyear('2020-06-18X10:30:15')", INTEGER, null);
+        assertFunction("weekofyear('2020-06-18xxx')", INTEGER, null);
     }
 }

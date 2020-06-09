@@ -358,15 +358,6 @@ public class ExtDateTimeFunctions
         return timestamp / 1000;
     }
 
-    @ScalarFunction("weekofyear")
-    @LiteralParameters("x")
-    @SqlType(StandardTypes.BIGINT)
-    public static long weekOfYear(@SqlType("varchar(x)") Slice slice)
-    {
-        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
-        return dt.getWeekOfWeekyear();
-    }
-
     @ScalarFunction("date_format")
     @LiteralParameters({"x", "y"})
     @SqlNullable
@@ -376,6 +367,19 @@ public class ExtDateTimeFunctions
         DateTime dt = DateTimeUtils.parseDateTime(left.toStringUtf8());
         if (dt != null) {
             return utf8Slice(dt.toString(right.toStringUtf8()));
+        }
+        return null;
+    }
+
+    @ScalarFunction("weekofyear")
+    @LiteralParameters("x")
+    @SqlNullable
+    @SqlType(StandardTypes.INTEGER)
+    public static Long weekOfYear(@SqlType("varchar(x)") Slice slice)
+    {
+        DateTime dt = DateTimeUtils.parseDateTime(slice.toStringUtf8());
+        if (dt != null) {
+            return (long) dt.getWeekOfWeekyear();
         }
         return null;
     }
