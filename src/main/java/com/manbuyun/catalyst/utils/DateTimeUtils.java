@@ -19,6 +19,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimePrinter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,17 +42,24 @@ public class DateTimeUtils
                 DateTimeFormat.forPattern("yyyy-MM-dd").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM-dd HH").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").getParser(),
-                DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser()};
+                DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser(),
+                DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getParser(),
+                ISODateTimeFormat.dateTimeParser().getParser()
+        };
         DateTimePrinter printer = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getPrinter();
         STANDARD_TIME_FORMATTER = new DateTimeFormatterBuilder()
                 .append(printer, parsers)
-                .toFormatter()
-                .withOffsetParsed();
+                .toFormatter();
     }
 
     public static DateTime parseDateTime(String value)
     {
-        return STANDARD_TIME_FORMATTER.parseDateTime(value);
+        try {
+            return STANDARD_TIME_FORMATTER.parseDateTime(value);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public static String toString(long instant)

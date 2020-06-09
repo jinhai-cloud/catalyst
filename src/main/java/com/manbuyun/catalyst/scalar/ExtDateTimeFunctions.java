@@ -369,10 +369,14 @@ public class ExtDateTimeFunctions
 
     @ScalarFunction("date_format")
     @LiteralParameters({"x", "y"})
-    @SqlType(StandardTypes.VARCHAR)
+    @SqlNullable
+    @SqlType("varchar(y)")
     public static Slice dateFormat(@SqlType("varchar(x)") Slice left, @SqlType("varchar(y)") Slice right)
     {
         DateTime dt = DateTimeUtils.parseDateTime(left.toStringUtf8());
-        return utf8Slice(dt.toString(right.toStringUtf8()));
+        if (dt != null) {
+            return utf8Slice(dt.toString(right.toStringUtf8()));
+        }
+        return null;
     }
 }
