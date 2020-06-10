@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 import static io.airlift.slice.Slices.utf8Slice;
 import static java.lang.Math.toIntExact;
@@ -165,7 +165,7 @@ public class ExtDateTimeFunctions
         String dt2 = DateTimeUtils.extractDay(right.toStringUtf8());
 
         if (dt1 != null && dt2 != null) {
-            return (long) Period.between(LocalDate.parse(dt2), LocalDate.parse(dt1)).getDays();
+            return ChronoUnit.DAYS.between(LocalDate.parse(dt2), LocalDate.parse(dt1));
         }
         return null;
     }
@@ -176,7 +176,7 @@ public class ExtDateTimeFunctions
     {
         LocalDate dt1 = DateTimeUtils.parseLocalDate(DAYS.toMillis(left));
         LocalDate dt2 = DateTimeUtils.parseLocalDate(DAYS.toMillis(right));
-        return Period.between(dt2, dt1).getDays();
+        return ChronoUnit.DAYS.between(dt2, dt1);
     }
 
     @ScalarFunction("datediff")
@@ -185,7 +185,7 @@ public class ExtDateTimeFunctions
     {
         LocalDate dt1 = DateTimeUtils.parseLocalDate(left);
         LocalDate dt2 = DateTimeUtils.parseLocalDate(right);
-        return Period.between(dt2, dt1).getDays();
+        return ChronoUnit.DAYS.between(dt2, dt1);
     }
 
     @ScalarFunction("datediff")
@@ -194,7 +194,7 @@ public class ExtDateTimeFunctions
     {
         LocalDate dt1 = DateTimeUtils.parseLocalDateZone(left);
         LocalDate dt2 = DateTimeUtils.parseLocalDateZone(right);
-        return Period.between(dt2, dt1).getDays();
+        return ChronoUnit.DAYS.between(dt2, dt1);
     }
 
     @ScalarFunction("datediff")
@@ -207,7 +207,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
             LocalDate dt2 = DateTimeUtils.parseLocalDate(DAYS.toMillis(right));
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
@@ -222,7 +222,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDate(DAYS.toMillis(left));
             LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
@@ -237,7 +237,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
             LocalDate dt2 = DateTimeUtils.parseLocalDate(right);
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
@@ -252,7 +252,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDate(left);
             LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
@@ -267,7 +267,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
             LocalDate dt2 = DateTimeUtils.parseLocalDateZone(right);
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
@@ -282,7 +282,7 @@ public class ExtDateTimeFunctions
         if (extract != null) {
             LocalDate dt1 = DateTimeUtils.parseLocalDateZone(left);
             LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
-            return (long) Period.between(dt2, dt1).getDays();
+            return ChronoUnit.DAYS.between(dt2, dt1);
         }
         return null;
     }
