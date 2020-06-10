@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimePrinter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,26 +53,6 @@ public class DateTimeUtils
                 .toFormatter();
     }
 
-    public static DateTime parseDateTime(String value)
-    {
-        try {
-            return STANDARD_TIME_FORMATTER.parseDateTime(value);
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String toString(long instant)
-    {
-        return STANDARD_TIME_FORMATTER.print(instant);
-    }
-
-    public static long unpackMillisUtc(long dateTimeWithTimeZone)
-    {
-        return dateTimeWithTimeZone >> MILLIS_SHIFT;
-    }
-
     /**
      * `yyyy-m[m]-d[d]*`
      * @param value
@@ -84,5 +65,48 @@ public class DateTimeUtils
             return matcher.group(1);
         }
         return null;
+    }
+
+    public static DateTime parseDateTime(String value)
+    {
+        try {
+            return STANDARD_TIME_FORMATTER.parseDateTime(value);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static LocalDate parseLocalDate(String value)
+    {
+        try {
+            DateTime dt = STANDARD_TIME_FORMATTER.parseDateTime(value);
+            return LocalDate.of(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static LocalDate parseLocalDate(long instant)
+    {
+        DateTime dt = new DateTime(instant);
+        return LocalDate.of(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+    }
+
+    public static LocalDate parseLocalDateZone(long dateTimeWithTimeZone)
+    {
+        DateTime dt = new DateTime(unpackMillisUtc(dateTimeWithTimeZone));
+        return LocalDate.of(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+    }
+
+    public static String print(long instant)
+    {
+        return STANDARD_TIME_FORMATTER.print(instant);
+    }
+
+    public static long unpackMillisUtc(long dateTimeWithTimeZone)
+    {
+        return dateTimeWithTimeZone >> MILLIS_SHIFT;
     }
 }

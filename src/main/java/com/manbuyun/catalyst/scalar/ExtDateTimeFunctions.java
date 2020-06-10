@@ -23,7 +23,6 @@ import io.prestosql.spi.function.SqlType;
 import io.prestosql.spi.type.StandardTypes;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -40,8 +39,6 @@ import static java.util.concurrent.TimeUnit.DAYS;
 public class ExtDateTimeFunctions
 {
     private ExtDateTimeFunctions() {}
-
-    private static final String YYYY_MM_DD = "yyyy-MM-dd";
 
     @ScalarFunction("date_add")
     @LiteralParameters("x")
@@ -62,24 +59,24 @@ public class ExtDateTimeFunctions
     @SqlType("varchar(10)")
     public static Slice dateAdd(@SqlType(StandardTypes.DATE) long date, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(DAYS.toMillis(date)).plusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(DAYS.toMillis(date)).plusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("date_add")
     @SqlType("varchar(10)")
     public static Slice dateAddTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(timestamp).plusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(timestamp).plusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("date_add")
     @SqlType("varchar(10)")
     public static Slice dateAddTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).plusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDateZone(timestampWithTimeZone).plusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("date_sub")
@@ -101,24 +98,24 @@ public class ExtDateTimeFunctions
     @SqlType("varchar(10)")
     public static Slice dateSub(@SqlType(StandardTypes.DATE) long date, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(DAYS.toMillis(date)).minusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(DAYS.toMillis(date)).minusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("date_sub")
     @SqlType("varchar(10)")
     public static Slice dateSubTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(timestamp).minusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(timestamp).minusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("date_sub")
     @SqlType("varchar(10)")
     public static Slice dateSubTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone, @SqlType(StandardTypes.BIGINT) long value)
     {
-        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone)).minusDays(toIntExact(value));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDateZone(timestampWithTimeZone).minusDays(toIntExact(value));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("to_date")
@@ -138,30 +135,30 @@ public class ExtDateTimeFunctions
     @SqlType("varchar(10)")
     public static Slice toDate(@SqlType(StandardTypes.DATE) long date)
     {
-        DateTime dt = new DateTime(DAYS.toMillis(date));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(DAYS.toMillis(date));
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("to_date")
     @SqlType("varchar(10)")
     public static Slice toDateTimestamp(@SqlType(StandardTypes.TIMESTAMP) long timestamp)
     {
-        DateTime dt = new DateTime(timestamp);
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDate(timestamp);
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("to_date")
     @SqlType("varchar(10)")
     public static Slice toDateTimeZone(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long timestampWithTimeZone)
     {
-        DateTime dt = new DateTime(DateTimeUtils.unpackMillisUtc(timestampWithTimeZone));
-        return utf8Slice(dt.toString(YYYY_MM_DD));
+        LocalDate dt = DateTimeUtils.parseLocalDateZone(timestampWithTimeZone);
+        return utf8Slice(dt.toString());
     }
 
     @ScalarFunction("datediff")
     @LiteralParameters({"x", "y"})
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff1(@SqlType("varchar(x)") Slice left, @SqlType("varchar(y)") Slice right)
     {
         String dt1 = DateTimeUtils.extractDay(left.toStringUtf8());
@@ -174,43 +171,43 @@ public class ExtDateTimeFunctions
     }
 
     @ScalarFunction("datediff")
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static long dateDiff2(@SqlType(StandardTypes.DATE) long left, @SqlType(StandardTypes.DATE) long right)
     {
-        DateTime dt1 = new DateTime(DAYS.toMillis(left));
-        DateTime dt2 = new DateTime(DAYS.toMillis(right));
-        return Days.daysBetween(dt2, dt1).getDays();
+        LocalDate dt1 = DateTimeUtils.parseLocalDate(DAYS.toMillis(left));
+        LocalDate dt2 = DateTimeUtils.parseLocalDate(DAYS.toMillis(right));
+        return Period.between(dt2, dt1).getDays();
     }
 
     @ScalarFunction("datediff")
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static long dateDiff3(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType(StandardTypes.TIMESTAMP) long right)
     {
-        DateTime dt1 = new DateTime(left);
-        DateTime dt2 = new DateTime(right);
-        return Days.daysBetween(dt2, dt1).getDays();
+        LocalDate dt1 = DateTimeUtils.parseLocalDate(left);
+        LocalDate dt2 = DateTimeUtils.parseLocalDate(right);
+        return Period.between(dt2, dt1).getDays();
     }
 
     @ScalarFunction("datediff")
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static long dateDiff4(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
     {
-        DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
-        DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
-        return Days.daysBetween(dt2, dt1).getDays();
+        LocalDate dt1 = DateTimeUtils.parseLocalDateZone(left);
+        LocalDate dt2 = DateTimeUtils.parseLocalDateZone(right);
+        return Period.between(dt2, dt1).getDays();
     }
 
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff5(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.DATE) long right)
     {
         String extract = DateTimeUtils.extractDay(left.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
-            DateTime dt2 = new DateTime(DAYS.toMillis(right));
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
+            LocalDate dt2 = DateTimeUtils.parseLocalDate(DAYS.toMillis(right));
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -218,14 +215,14 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff6(@SqlType(StandardTypes.DATE) long left, @SqlType("varchar(x)") Slice right)
     {
         String extract = DateTimeUtils.extractDay(right.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = new DateTime(DAYS.toMillis(left));
-            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDate(DAYS.toMillis(left));
+            LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -233,14 +230,14 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff7(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP) long right)
     {
         String extract = DateTimeUtils.extractDay(left.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
-            DateTime dt2 = new DateTime(right);
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
+            LocalDate dt2 = DateTimeUtils.parseLocalDate(right);
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -248,14 +245,14 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff8(@SqlType(StandardTypes.TIMESTAMP) long left, @SqlType("varchar(x)") Slice right)
     {
         String extract = DateTimeUtils.extractDay(right.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = new DateTime(left);
-            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDate(left);
+            LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -263,14 +260,14 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff9(@SqlType("varchar(x)") Slice left, @SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long right)
     {
         String extract = DateTimeUtils.extractDay(left.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = DateTimeUtils.parseDateTime(extract);
-            DateTime dt2 = new DateTime(DateTimeUtils.unpackMillisUtc(right));
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDate(extract);
+            LocalDate dt2 = DateTimeUtils.parseLocalDateZone(right);
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -278,14 +275,14 @@ public class ExtDateTimeFunctions
     @ScalarFunction("datediff")
     @LiteralParameters("x")
     @SqlNullable
-    @SqlType(StandardTypes.BIGINT)
+    @SqlType(StandardTypes.INTEGER)
     public static Long dateDiff10(@SqlType(StandardTypes.TIMESTAMP_WITH_TIME_ZONE) long left, @SqlType("varchar(x)") Slice right)
     {
         String extract = DateTimeUtils.extractDay(right.toStringUtf8());
         if (extract != null) {
-            DateTime dt1 = new DateTime(DateTimeUtils.unpackMillisUtc(left));
-            DateTime dt2 = DateTimeUtils.parseDateTime(extract);
-            return (long) Days.daysBetween(dt2, dt1).getDays();
+            LocalDate dt1 = DateTimeUtils.parseLocalDateZone(left);
+            LocalDate dt2 = DateTimeUtils.parseLocalDate(extract);
+            return (long) Period.between(dt2, dt1).getDays();
         }
         return null;
     }
@@ -294,7 +291,7 @@ public class ExtDateTimeFunctions
     @SqlType("varchar(19)")
     public static Slice fromUnixTime(@SqlType(StandardTypes.BIGINT) long unixTime)
     {
-        return utf8Slice(DateTimeUtils.toString(unixTime * 1000));
+        return utf8Slice(DateTimeUtils.print(unixTime * 1000));
     }
 
     @ScalarFunction("from_unixtime")

@@ -73,6 +73,14 @@ public class TestExtDateTimeFunctions
     @Test
     public void testDateDiff()
     {
+        assertFunction("datediff('2020-06-18 10:30', '2020-06-15 10:30:15')", INTEGER, 3);
+        assertFunction("datediff(DATE '2020-06-18', DATE '2020-06-15')", INTEGER, 3);
+        assertFunction("datediff(TIMESTAMP '2020-06-18 10:30', TIMESTAMP '2020-06-15 10:30:15')", INTEGER, 3);
+
+        assertFunction("datediff('2020-06-18 10:30', DATE '2020-06-15')", INTEGER, 3);
+        assertFunction("datediff(DATE '2020-06-15', '2020-06-18 10:30')", INTEGER, -3);
+        assertFunction("datediff('2020-06-18 10:30', TIMESTAMP '2020-06-15 10:30')", INTEGER, 3);
+        assertFunction("datediff(TIMESTAMP '2020-06-15 10:30', '2020-06-18 10:30')", INTEGER, -3);
     }
 
     @Test
