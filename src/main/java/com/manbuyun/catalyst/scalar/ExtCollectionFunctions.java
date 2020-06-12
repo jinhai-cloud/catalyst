@@ -31,18 +31,24 @@ public class ExtCollectionFunctions
     @ScalarFunction("size")
     @TypeParameter("E")
     @SqlType(StandardTypes.INTEGER)
-    public static long arraySize(@SqlType("array(E)") Block block)
+    public static long arraySize(@SqlNullable @SqlType("array(E)") Block block)
     {
-        return block.getPositionCount();
+        if (block != null) {
+            return block.getPositionCount();
+        }
+        return -1;
     }
 
     @ScalarFunction("size")
     @TypeParameter("K")
     @TypeParameter("V")
     @SqlType(StandardTypes.INTEGER)
-    public static long mapSize(@SqlType("map(K,V)") Block block)
+    public static long mapSize(@SqlNullable @SqlType("map(K,V)") Block block)
     {
-        return block.getPositionCount() / 2;
+        if (block != null) {
+            return block.getPositionCount() / 2;
+        }
+        return -1;
     }
 
     @ScalarFunction("size")
